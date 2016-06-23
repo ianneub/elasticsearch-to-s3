@@ -1,0 +1,27 @@
+version: '2'
+
+services:
+
+  run:
+    build: .
+    volumes:
+      - ".:/usr/src/app"
+    links:
+      - es
+    env_file:
+      - .env_default
+      - .env
+
+  fill:
+    build: .
+    command: ruby fill.rb
+    volumes:
+      - ".:/usr/src/app"
+    links:
+      - es
+    env_file:
+      - .env_default
+      - .env
+
+  es:
+    image: elasticsearch

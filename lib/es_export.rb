@@ -37,11 +37,13 @@ module EsExport
       output.write encoder.encode(meta) + "\n"
 
       # output es data
+      count = 0
       each_doc(options) do |doc, n, total|
         output.write(encoder.encode(doc) + "\n")
+        count += 1
       end
       
-      true
+      count
     end
 
     def each_doc(options = Hash.new, &block)

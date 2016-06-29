@@ -2,8 +2,22 @@ version: '2'
 
 services:
 
-  run:
-    build: .
+  export:
+    build:
+      context: .
+      dockerfile: Dockerfile.export
+    volumes:
+      - ".:/usr/src/app"
+    links:
+      - es
+    env_file:
+      - .env_default
+      - .env
+
+  import:
+    build:
+      context: .
+      dockerfile: Dockerfile.import
     volumes:
       - ".:/usr/src/app"
     links:
@@ -13,7 +27,9 @@ services:
       - .env
 
   fill:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.import
     command: ruby fill.rb
     volumes:
       - ".:/usr/src/app"

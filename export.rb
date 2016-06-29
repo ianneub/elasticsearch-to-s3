@@ -1,4 +1,4 @@
-require_relative "lib/es_export"
+require_relative 'lib/es_export'
 require 'zlib'
 require 'aws-sdk'
 

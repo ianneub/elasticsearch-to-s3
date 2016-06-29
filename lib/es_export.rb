@@ -2,8 +2,9 @@ require 'elasticsearch'
 require 'yajl'
 
 module EsExport
+  class IndexAlreadyExists < StandardError; end
   class Index
-    attr_accessor :name, :url, :client
+    attr_accessor :name, :url, :client, :setting, :mapping
 
     def self.find(search="")
       ENV['ELASTICSEARCH_SERVER'] ||= 'http://localhost:9200'
@@ -25,6 +26,24 @@ module EsExport
 
     def delete
       client.indices.delete index: name
+    end
+
+    def create
+      raise IndexAlreadyExists, "Index named: #{name} already exists." if exists?
+      
+      body = {}
+      body[:settings] = setting if setting
+      body[:mappings] = mapping if mapping
+
+      client.indices.create index: name, body: body.to_json
+    end
+
+    def put(type:, id:, data:)
+      client.index index: name, type: type, id: id, body: data
+    end
+
+    def exists?
+      client.indices.exists? index: name
     end
 
     def backup(output, options = Hash.new)

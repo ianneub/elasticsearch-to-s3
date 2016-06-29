@@ -37,4 +37,5 @@ Development of this docker image uses Docker Compose. Simply install docker and 
 
 1. `docker-compose up -d es`, then wait about 10 seconds for Elasticsearch to start up.
 2. `docker-compose up fill` to load some dummy data into Elasticsearch.
-3. `docker-compose up run` to run the script.
+3. `docker-compose up export` to run the export script.
+3. `docker-compose up import` to run the import script.

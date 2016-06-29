@@ -27,14 +27,30 @@ Zlib::GzipReader.open(filename) do |f|
   end
 
   # create new index
-  puts "Creating index named: #{ENV["ES_INDEX"]} ..."
+  puts "Creating index named: #{import.name} ..."
   import.create
   
+  # setup an array to use for bulk data inserts
+  docs = []
+
   # the rest of the lines are individual docs
+  puts "Importing data ..."
   f.each_line do |line|
     data = JSON.parse(line)
-    import.put type: data['_type'], id: data['_id'], data: data['_source']
+    docs << {index: {_index: import.name, _type: data['_type'], _id: data['_id'], data: data['_source']}}
+
+    if docs.length == 100
+      import.bulk(docs)
+      docs = []
+    end
   end
+
+  import.bulk docs if docs.length > 0
+
+  # flush the index to make sure docs were committed, before we ask for the count
+  import.flush
+
+  puts "Imported #{import.count} items."
 end
 
 puts "Done."

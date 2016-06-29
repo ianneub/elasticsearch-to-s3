@@ -42,6 +42,20 @@ module EsExport
       client.index index: name, type: type, id: id, body: data
     end
 
+    def bulk(data)
+      raise ArgumentError unless data.is_a?(Array)
+
+      client.bulk body: data
+    end
+
+    def flush
+      client.indices.flush(index: name)
+    end
+    
+    def count
+      client.count(index: name)['count']
+    end
+
     def exists?
       client.indices.exists? index: name
     end
